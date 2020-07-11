@@ -1,0 +1,66 @@
+
+<!DOCTYPE HTML>
+<html>
+ <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+    <title>Test runner</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            font-family: sans-serif;
+        }
+    </style>
+ </head>
+ <body>
+<script>
+
+    const videos = [{}];
+
+    let process = function(options) {
+
+        let video = document.createElement('video');
+
+        const next = function() {
+            video.onerror = null;
+            video.src = '';
+            if(videos.length) {
+                return process(videos.shift());
+            }
+        };
+
+        let line = document.createElement('div');
+        line.innerHTML = 'Testing  h264 (' + options.resolution + ', ' + options.aspectRatio + ', ' + options.profile + ', ' + options.fps + 'fps) ...';
+        document.body.appendChild(line);
+
+        
+        video.autoplay = true;
+        video.muted = true;
+        video.addEventListener('canplay', (e) => {
+            line.innerHTML = 'Testing  h264 (' + options.resolution + ', ' + options.aspectRatio + ', ' + options.profile + ', ' + options.fps + 'fps) ...<span style="color: green;">success</span>!';
+            next();
+        });
+
+        video.addEventListener('loadeddata', (e) => {
+            line.innerHTML = 'Testing  h264 (' + options.resolution + ', ' + options.aspectRatio + ', ' + options.profile + ', ' + options.fps + 'fps) ...<span style="color: orange;">looking good..</span>!';
+        });
+
+        video.onerror = (e) => {
+            console.log(e, video.error);
+            line.innerHTML = 'Testing  h264 (' + options.resolution + ', ' + options.aspectRatio + ', ' + options.profile + ', ' + options.fps + 'fps) ...<span style="color: red;">' + video.error.message + ' [' + video.error.code + ']</span>!';
+            next();
+        };
+
+        video.src = options.src;
+
+
+
+    };
+
+    process(videos[0]);
+
+
+
+</script>
+</body></html>
